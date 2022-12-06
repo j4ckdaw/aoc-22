@@ -11,12 +11,12 @@ commonItem :: (Set Char, Set Char) -> Char
 commonItem (a, b) = elemAt 0 $ intersection a b
 
 rucksacksA :: String -> [(Set Char, Set Char)]
-rucksacksA text = map makeSets (map split (lines text))
+rucksacksA text = map (makeSets . split) (lines text)
     where split s         = splitAt ((length s) `div` 2) s
           makeSets (a, b) = (fromList a, fromList b)
 
 solveA :: String -> Int
-solveA input = sum $ map priority (map commonItem (rucksacksA input))
+solveA input = sum $ map (priority . commonItem) (rucksacksA input)
 
 rucksacksB :: String -> [Set Char]
 rucksacksB text = map fromList (lines text)
