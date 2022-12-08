@@ -5,33 +5,33 @@ createGrid input = grid
     where
         w = length (input !! 0) - 1
         h = length input - 1
-        edge (i, j) = i == 0 || i == h || j == 0 || j == w
-        grid = array ((0,0), (h,w)) [((i,j), read [(input !! i) !! j]::Int) | (i,j) <- range ((0,0), (h,w))]
+        grid = array ((0,0), (h,w)) [((i,j), getTree (i,j)) | (i,j) <- range ((0,0), (h,w))]
+        getTree (i,j) = read [(input !! i) !! j]::Int
 
 visible :: Array (Int, Int) Int -> (Int, Int) -> Bool
-visible grid (i, j) = up || down || left || right
+visible grid (i,j) = up || down || left || right
     where
-        (h, w) = snd $ bounds grid
+        (h,w) = snd $ bounds grid
         height = grid ! (i, j)
-        up     = all (<height) [grid ! (k, j) | k <- [0..i-1]]
-        down   = all (<height) [grid ! (k, j) | k <- [i+1..h]]
-        left   = all (<height) [grid ! (i, k) | k <- [0..j-1]]
-        right  = all (<height) [grid ! (i, k) | k <- [j+1..w]]
+        up     = all (<height) [grid ! (k,j) | k <- [0..i-1]]
+        down   = all (<height) [grid ! (k,j) | k <- [i+1..h]]
+        left   = all (<height) [grid ! (i,k) | k <- [0..j-1]]
+        right  = all (<height) [grid ! (i,k) | k <- [j+1..w]]
 
 -- also takes the first element that fails the predicate (i.e the tree that blocks the view)
 takeWhile' :: (a -> Bool) -> [a] -> [a]
-takeWhile' _       []  = []
-takeWhile' pred (x:xs) = if pred x then x : takeWhile' pred xs else [x]
+takeWhile' _    []  = []
+takeWhile' p (x:xs) = if p x then x : takeWhile' p xs else [x]
 
 scenicScore :: Array (Int, Int) Int -> (Int, Int) -> Int
 scenicScore grid (i,j) = up * down * left * right
     where
-        (h, w) = snd $ bounds grid
+        (h,w) = snd $ bounds grid
         height = grid ! (i,j)
-        up     = length $ takeWhile' (<height) $ reverse [grid ! (k, j) | k <- [0..i-1]]
-        down   = length $ takeWhile' (<height)           [grid ! (k, j) | k <- [i+1..h]]
-        left   = length $ takeWhile' (<height) $ reverse [grid ! (i, k) | k <- [0..j-1]]
-        right  = length $ takeWhile' (<height)           [grid ! (i, k) | k <- [j+1..w]]
+        up     = length $ takeWhile' (<height) $ reverse [grid ! (k,j) | k <- [0..i-1]]
+        down   = length $ takeWhile' (<height)           [grid ! (k,j) | k <- [i+1..h]]
+        left   = length $ takeWhile' (<height) $ reverse [grid ! (i,k) | k <- [0..j-1]]
+        right  = length $ takeWhile' (<height)           [grid ! (i,k) | k <- [j+1..w]]
 
 
 solveA :: [String] -> Int
